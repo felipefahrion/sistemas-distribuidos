@@ -8,10 +8,11 @@ A sua tarefa consiste na implementação de um sistema P2P básico, que deve ser
 - [ ] O servidor associa os metadados de cada recurso em uma estrutura de dados adequada, juntamente com informações sobre a origem de casda recurso (identificação do peer, como IP e porta).
 - [ ] Os peers podem solicitar uma lista de recursos (nomes e hashes) ou um recurso específico ao servidor. É necessária a definição de um critério de busca, e não apenas a lista completa dos recursos.
 - [ ] Ao solicitar um recurso ao servidor, o cliente recebe a metadados apenas, incluindo sua localização (outro peer). O peer deve então realizar a comunicação P2P para transferência do recurso.
-- [ ] O servidor é responsável por manter a estrutura da rede e do estado dos peers. Para isso, os peers devem enviar mensagens periódicas ao servidor (a cada 10 segundos). Caso um peer deixe de enviar uma mensagem, o mesmo deve ser removido e seus metadados excluídos. Para o desenvolvimento, é sugerido que os alunos utilizem uma rede com topologia definida, e que sejam realizados testes com um número suficiente de máquinas (pelo menos 3) ou VMs.
+- [ ] O servidor é responsável por manter a estrutura da rede e do estado dos peers. Para isso, os peers devem enviar mensagens periódicas ao servidor (a cada 10 segundos). Caso um peer deixe de enviar uma mensagem, o mesmo deve ser removido e seus metadados excluídos. 
 
-O trabalho deve ser realizado em grupos de 2 ou 3 integrantes. Qualquer
-linguagem de programação pode ser utilizada, desde que as abstrações para comunicação entre processos sejam e equivalentes aos exemplos apresentados em sala de aula (modelo de comunicação utilizando Sockets). Para a entrega é solicitado o código fonte da aplicação. O trabalho será apresentado em sala de aula pelo grupo no dia 04/10.
+Para o desenvolvimento, é sugerido que os alunos utilizem uma rede com topologia definida, e que sejam realizados testes com um número suficiente de máquinas (pelo menos 3) ou VMs.
+
+O trabalho deve ser realizado em grupos de 2 ou 3 integrantes. Qualquer linguagem de programação pode ser utilizada, desde que as abstrações para comunicação entre processos sejam e equivalentes aos exemplos apresentados em sala de aula (modelo de comunicação utilizando Sockets). Para a entrega é solicitado o código fonte da aplicação. O trabalho será apresentado em sala de aula pelo grupo no dia 04/10.
 # Como rodar
 
 - Ter Java instalado e configurado.
@@ -40,4 +41,18 @@ java p2pPeer 127.0.0.1 "create peer_name" <port>
 
 ```
 java p2pPeer 127.0.0.1 "list peer_name" <port>
+```
+
+
+
+- Registry: 
+
+```
+java p2pPeer 127.0.0.1 "registry pipo docs/a1.txt,docs/a2.txt,docs/a3.txt" 9001
+```
+
+- Query: 
+
+```
+java p2pPeer 127.0.0.1 "query a1.txt"
 ```
