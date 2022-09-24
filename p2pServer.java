@@ -55,20 +55,24 @@ public class p2pServer {
 		System.out.println(timeoutVal.size());
 
 		for (int i = 0; i < peers.size(); i++) {
-			if (peers.get(i).getNickname().equals(nickname))
+			if (peers.get(i).getNickname().equals(nickname)){
+				System.out.println("é o " + nickname);
 				timeoutVal.set(i, TIME_MILISSECONDS);
+			}
 		}
 
+		System.out.println("SOPAAA");
 		for (Integer integer : timeoutVal) {
 			System.out.println(integer);
 		}
+
 		return timeoutVal;
 	}
 
 	public static List<Integer> removePeer(List<Peer> peers, List<Integer> timeoutVal) {
 		for (int i = 0; i < timeoutVal.size(); i++) {
 			timeoutVal.set(i, timeoutVal.get(i) - 1);
-			System.out.println(timeoutVal.get(i));
+			System.out.println("olahndo valor: " + timeoutVal.get(i));
 			if (timeoutVal.get(i) == 0) {
 				System.out.println("\nPeer " + peers.get(i).getNickname() + " is dead.");
 				peers.remove(i);
@@ -93,7 +97,7 @@ public class p2pServer {
 		// String vars[] = content.split("\\s");
 		
 		List<Peer> peers = new ArrayList<>();
-		List<Integer> timeoutVal = new ArrayList<>();
+		List<Integer> heartbeatRegister = new ArrayList<>();
 		
 		while (true) {
 			try {
@@ -122,7 +126,7 @@ public class p2pServer {
 								// vars[1] nickname
 								// vars[2] resource
 								
-							peers = registry(peers, vars[1], addressReceived, portReceived, vars[2], timeoutVal, socket);
+							peers = registry(peers, vars[1], addressReceived, portReceived, vars[2], heartbeatRegister, socket);
 							break;
 
 						case "query":
@@ -142,7 +146,7 @@ public class p2pServer {
 
 						case "heartbeat":
 							//verificar se o peer está ativo
-							timeoutVal = hearbeat(vars[1], peers, timeoutVal);
+							heartbeatRegister = hearbeat(vars[1], peers, heartbeatRegister);
 							break;
 					
 						default:
@@ -210,7 +214,7 @@ public class p2pServer {
 				// 		timeoutVal.remove(i);
 				// 	}
 				// }
-				timeoutVal = removePeer(peers, timeoutVal);
+				heartbeatRegister = removePeer(peers, heartbeatRegister);
 				System.out.print(".");
 			}
 		}
