@@ -21,16 +21,20 @@ public class p2pPeerClient extends Thread {
 		String str = "";	
 
 		while (true) {
+			System.out.println("Example: query a1.txt <server_ip>");
+			System.out.println("Example: p2p a1.txt <hash> <peer_ip> <peer_port>"); //WIP
 
-			System.out.println("\n<list/peer> <message> <ip>");
-			System.out.println("Example: list user <server_ip>");
-			System.out.println("Example: peer \"hello_world!\" <peer_ip> <port>");
 			try {
+
+				// vars[2] = address
+				// vars[3] = port
+
 				str = obj.readLine();
 				String vars[] = str.split("\\s");
 				addr = InetAddress.getByName(vars[2]);
 				String str2 = vars[0] + " " + vars[1];
 				resource = str2.getBytes();
+
 				if (vars.length == 4) {
 					System.out.println("Sending message to peer on port " + vars[3]);
 					peer_port = Integer.parseInt(vars[3]);

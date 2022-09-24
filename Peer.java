@@ -12,7 +12,7 @@ public class Peer {
     private String nickname;
     private InetAddress address;
     private Integer port;
-    private Map resourceList;
+    private Map<String, String> resourceList;
 
     public Peer(String nickname, InetAddress address, Integer port, String resourceList) {
         this.nickname = nickname;
@@ -21,7 +21,7 @@ public class Peer {
         this.resourceList = resourceMap(resourceList);
     }
 
-    private Map resourceMap(String resourceList){
+    private Map<String, String> resourceMap(String resourceList){
 
         Map<String, String> resource = new HashMap<>();
 
@@ -30,16 +30,23 @@ public class Peer {
 
             for (String e : docs) {
                 String hash = generateHash(fileContent(e));
-                String fileName = e.replaceAll("docs/", " ");
+                String fileName = e.replaceAll("docs/", "");
 
                 resource.put(fileName, hash);
-                
+
                 System.out.println("FILENAME => " + fileName + " HASH => " + hash);
             }
+
+            for (Map.Entry<String, String> entry : resource.entrySet()) {
+                System.out.println(entry.getKey() + ":" + entry.getValue());
+            }
+        
 
         } catch (IOException e) {
             System.out.println(e);
         }
+        
+        System.out.println(resource.size());
 
         return resource;
     }
@@ -85,11 +92,11 @@ public class Peer {
         this.port = port;
     }
 
-    public Map getResourceList() {
+    public Map<String, String> getResourceList() {
         return resourceList;
     }
 
-    public void setResourceList(Map resourceList) {
+    public void setResourceList(Map<String, String> resourceList) {
         this.resourceList = resourceList;
     }
 }
