@@ -21,8 +21,8 @@ public class p2pPeerClient extends Thread {
 		String str = "";	
 
 		while (true) {
-			System.out.println("Example: query a1.txt <server_ip>");
-			System.out.println("Example: p2p a1.txt <hash> <peer_ip> <peer_port>"); //WIP
+			System.out.println("Exemplo para solicitar um doc: query a1.txt <server_ip>");
+			System.out.println("Exemplo para baixar um doc: p2p a1.txt <hash> <peer_ip> <peer_port>"); //WIP
 
 			try {
 
@@ -36,7 +36,7 @@ public class p2pPeerClient extends Thread {
 				resource = str2.getBytes();
 
 				if (vars.length == 4) {
-					System.out.println("Sending message to peer on port " + vars[3]);
+					System.out.println("Enviando mensagem para o peer na porta " + vars[3]);
 					peer_port = Integer.parseInt(vars[3]);
 				} else {
 					peer_port = 9000;
