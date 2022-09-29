@@ -50,7 +50,7 @@ public class p2pServer {
 	}
 
 	public static List<Integer> hearbeat(String nickname, List<Peer> peers, List<Integer> timeoutVal) {
-		System.out.println("Heartbeat from " + nickname);
+		System.out.println("Heartbeat de " + nickname);
 
 		for (int i = 0; i < peers.size(); i++) {
 			if (peers.get(i).getNickname().equals(nickname)){
@@ -65,7 +65,7 @@ public class p2pServer {
 		for (int i = 0; i < timeoutVal.size(); i++) {
 			timeoutVal.set(i, timeoutVal.get(i) - 1);
 			if (timeoutVal.get(i) == 0) {
-				System.out.println("\nPeer " + peers.get(i).getNickname() + " is dead.");
+				System.out.println("\nPeer " + peers.get(i).getNickname() + " faleceu.");
 				peers.remove(i);
 				timeoutVal.remove(i);
 			}
@@ -97,7 +97,7 @@ public class p2pServer {
 				socket.setSoTimeout(500);
 				socket.receive(packet);
 
-				System.out.println("\nDatagram received!");
+				System.out.println("\nDatagrama recebido!");
 								
 				// processa o que foi recebido, adicionando a uma lista
 				String contentReceived = new String(packet.getData(), 0, packet.getLength());
