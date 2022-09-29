@@ -15,31 +15,49 @@ Para o desenvolvimento, é sugerido que os alunos utilizem uma rede com topologi
 O trabalho deve ser realizado em grupos de 2 ou 3 integrantes. Qualquer linguagem de programação pode ser utilizada, desde que as abstrações para comunicação entre processos sejam e equivalentes aos exemplos apresentados em sala de aula (modelo de comunicação utilizando Sockets). Para a entrega é solicitado o código fonte da aplicação. O trabalho será apresentado em sala de aula pelo grupo no dia 04/10.
 # Como rodar
 
-- Ter Java instalado e configurado.
+## 1. Ter Java instalado e configurado.
 
 ```
 make
 ```
-
-Rodar o servidor: 
-
+ou
 ```
-java p2pServer <ip_address>
+javac *.java
 ```
 
-Por default a execução do servidor já ocorre na porta 9000
+## 2. Definir o servidor e os peers:
 
-Para rodar um peer: 
+### Para rodar como servidor: 
 
+```
+java p2pServer <seu_endereco_de_ip>
+```
 
-- Registry: 
+Por default a execução do servidor já ocorre na porta 9000.
+
+### Para rodar como um peer: 
+
+- Executar o Registry: 
+Iniciar o peer com os seguintes parâmetros: o ip do server, seu nome de usuario, os documentos para registrar e a porta do server.
+
+java p2pPeer <server_ip> "registry <user> docs/a1.txt,docs/a2.txt" <server_port>
+
+Por exemplo:
 
 ```
 java p2pPeer 127.0.0.1 "registry pipo docs/a1.txt,docs/a2.txt,docs/a3.txt" 9001
 ```
 
-- Query: 
+- Para o peer pedir a hash de um documento para o Servidor: 
+
+digitar query, o nome do documento e o ip do peer.
+
+Por exemplo:
 
 ```
 query a1.txt 192.168.68.101
 ```
+
+- Para o peer baixar o documento diretamente de outro peer:
+
+...
