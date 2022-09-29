@@ -33,21 +33,11 @@ public class Peer {
                 String fileName = e.replaceAll("docs/", "");
 
                 resource.put(fileName, hash);
-
-                System.out.println("FILENAME => " + fileName + " HASH => " + hash);
-            }
-
-            for (Map.Entry<String, String> entry : resource.entrySet()) {
-                System.out.println(entry.getKey() + ":" + entry.getValue());
-            }
-        
+            }       
 
         } catch (IOException e) {
             System.out.println(e);
         }
-        
-        System.out.println(resource.size());
-
         return resource;
     }
 
