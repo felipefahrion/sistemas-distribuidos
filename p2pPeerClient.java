@@ -58,9 +58,8 @@ public class p2pPeerClient extends Thread {
 						break;
 
 					case "peer":
-						peer_port = vars[3];
-						String contentQuery = vars[2];
-						resource = contentQuery.getBytes();
+						peer_port = Integer.parseInt(vars[3]);
+						resource = vars[2].getBytes();
 
 						break;
 
