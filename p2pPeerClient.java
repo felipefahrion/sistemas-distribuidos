@@ -41,17 +41,17 @@ public class p2pPeerClient extends Thread {
 		while (true) {
 			System.out.println("Exemplo para solicitar um doc: query a1.txt <server_ip>");
 			System.out.println("Exemplo para baixar um doc: p2p a1.txt <hash> <peer_ip> <peer_port>"); // WIP
-			System.out.println("Exemplo para baixar um doc: peer \"text\" <peer_ip> <peer_port>"); // WIP
+			System.out.println("Exemplo para baixar um doc: peer \"text\" <peer_ip> <peer_port>");
 
 			try {
 				String str = obj.readLine();
 				String vars[] = str.split("\\s");
 
-				addr = InetAddress.getByName(vars[2]);
-
+				
 				switch (vars[0]) {
 					case "query":
 						peer_port = 9000;
+						addr = InetAddress.getByName(vars[2]);
 						String contentQuery = vars[0] + " " + vars[1];
 						resource = contentQuery.getBytes();
 
@@ -59,7 +59,19 @@ public class p2pPeerClient extends Thread {
 
 					case "peer":
 						peer_port = Integer.parseInt(vars[3]);
-						resource = vars[2].getBytes();
+						resource = vars[1].getBytes();
+
+						break;
+
+					case "p2p":
+						// 0   1      2      3         4
+						// p2p a1.txt <hash> <peer_ip> <peer_port>"
+
+						peer_port = Integer.parseInt(vars[4]);
+						addr = InetAddress.getByName(vars[3]);
+
+						String content = vars[0] + " " + vars[1] + " " + vars[2];
+						resource = content.getBytes();
 
 						break;
 
