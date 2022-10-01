@@ -39,8 +39,6 @@ public class p2pPeerThread extends Thread {
 			// envia um packet
 			DatagramPacket packet = new DatagramPacket(resource, resource.length, addr, 9000);
 			socket.send(packet);
-
-			System.out.println("O QUE TEM AQUI? " + packet.toString());
 		} catch (IOException e) {
 			socket.close();
 		}
@@ -63,11 +61,18 @@ public class p2pPeerThread extends Thread {
 				String vars[] = data.split("\\s");
 
 				if(vars.length > 1 && vars[0].equals("p2p")){
+					System.out.println("P2P BOLADAO");
+
+					for (int i = 0; i < vars.length; i++) {
+						System.out.println(i + " " + vars[i]);
+					}
 
 					if(resourceList.get(vars[1]).equals(vars[2])){
 
 						// File sendFile = new File("received/copy_" + vars[1]);
 						String content = Files.readString(Paths.get("docs/" + vars[1]));
+						System.out.println("CONTENT");
+						System.out.println(content);
 								
 						// FileOutputStream fos = new FileOutputStream(sendFile);
 				
@@ -80,7 +85,7 @@ public class p2pPeerThread extends Thread {
 						// b.writeTo(fos);
 						b.write(content.getBytes());
 						
-						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), resource.length, addr, packet.getPort());
+						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), content.length(), packet.getAddress(), packet.getPort());
 						socket.send(filePacket);
 
 						b.flush();
