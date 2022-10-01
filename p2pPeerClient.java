@@ -11,7 +11,7 @@ public class p2pPeerClient extends Thread {
 	protected int port, peer_port;
 	private Peer peer;
 
-	public p2pPeerClient(String[] args) throws IOException {
+	public p2pPeerClient(String[] args, Map<String, String> resourceList) throws IOException {
 
 		// port = args[2]
 		// address = args[0]
@@ -29,9 +29,9 @@ public class p2pPeerClient extends Thread {
 		socket = new DatagramSocket(port);
 	}
 
-	public Peer createPeer(String nickname, String address, String port, String resourceList)
+	public Peer createPeer(String nickname, String address, Integer port, String resourceList)
 			throws NumberFormatException, UnknownHostException {
-		return new Peer(nickname, InetAddress.getByName(address), Integer.parseInt(port), resourceList);
+		return new Peer(nickname, InetAddress.getByName(address), port, resourceList);
 	}
 
 	public void run() {
@@ -55,7 +55,7 @@ public class p2pPeerClient extends Thread {
 						resource = contentQuery.getBytes();
 
 						break;
-						
+
 					default:
 						peer_port = Integer.parseInt(vars[3]);
 						break;
