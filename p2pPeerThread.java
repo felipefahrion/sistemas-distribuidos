@@ -17,11 +17,6 @@ public class p2pPeerThread extends Thread {
 
 
 	public p2pPeerThread(String[] args, Map<String, String> resourceContent) throws IOException {
-
-		for (int i = 0; i < args.length; i++) {
-			System.out.println(i + " " + args[i]);
-		}
-
 		// envia um packet
 		resource = args[1].getBytes();
 		addr = InetAddress.getByName(args[0]);
@@ -36,7 +31,6 @@ public class p2pPeerThread extends Thread {
 	public void run() {
 		
 		try {
-			// envia um packet
 			DatagramPacket packet = new DatagramPacket(resource, resource.length, addr, 9000);
 			socket.send(packet);
 		} catch (IOException e) {
@@ -49,8 +43,6 @@ public class p2pPeerThread extends Thread {
 				packet = new DatagramPacket(response, response.length);
 				socket.setSoTimeout(500);
 				socket.receive(packet);
-
-				System.out.println("PACKET ====> " + response);
 				
 				// mostra a resposta
 				String data = new String(packet.getData(), 0, packet.getLength());
@@ -68,21 +60,12 @@ public class p2pPeerThread extends Thread {
 					}
 
 					if(resourceList.get(vars[1]).equals(vars[2])){
+						String contentFile = Files.readString(Paths.get("docs/" + vars[1]));
+						String content = "newfile" + ";" + vars[1] + ";" + contentFile;
 
-						// File sendFile = new File("received/copy_" + vars[1]);
-						String content = Files.readString(Paths.get("docs/" + vars[1]));
-						System.out.println("CONTENT");
-						System.out.println(content);
-								
-						// FileOutputStream fos = new FileOutputStream(sendFile);
-				
-						// fos.write(content.getBytes(StandardCharsets.UTF_8), 0, content.length());
-				
-						// fos.flush();
-						// fos.close();
+						System.out.println("CONTENT ====> " + content);
 
-						ByteArrayOutputStream b = new ByteArrayOutputStream(content.length());
-						// b.writeTo(fos);
+						ByteArrayOutputStream b = new ByteArrayOutputStream(contentFile.length());
 						b.write(content.getBytes());
 						
 						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), content.length(), packet.getAddress(), packet.getPort());
@@ -90,8 +73,6 @@ public class p2pPeerThread extends Thread {
 
 						b.flush();
 						b.close();
-
-						System.out.println("FILE PACKET DATA ====> " + filePacket.getData());
 					}
 					
 				}

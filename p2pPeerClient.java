@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class p2pPeerClient extends Thread {
@@ -97,6 +98,19 @@ public class p2pPeerClient extends Thread {
 					// mostra a resposta
 					String resposta = new String(packet.getData(), 0, packet.getLength());
 					System.out.println("recebido: " + resposta);
+
+					if(resposta.length() > 0){
+						String[] a = resposta.split("\\;");
+
+						if (a[0].equals("newfile")) {
+							File newFile = new File("received/copy_" + a[1]);
+							FileOutputStream fos = new FileOutputStream(newFile);
+				
+							fos.write(a[2].getBytes(StandardCharsets.UTF_8), 0, a[2].length());
+							fos.flush();
+							fos.close();
+						}
+					}
 				} catch (IOException e) {
 					break;
 				}
