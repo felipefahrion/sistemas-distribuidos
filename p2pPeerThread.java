@@ -33,7 +33,6 @@ public class p2pPeerThread extends Thread {
 		
 		while (true) {
 			try {
-				System.out.println("p2pPeerThread");
 				// obtem a resposta
 				packet = new DatagramPacket(response, response.length);
 				socket.setSoTimeout(500);
