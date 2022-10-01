@@ -64,31 +64,31 @@ public class p2pPeerThread extends Thread {
 
 					if(resourceList.get(vars[1]).equals(vars[2])){
 
-						File sendFile = new File("received/copy_" + vars[1]);
+						// File sendFile = new File("received/copy_" + vars[1]);
 						String content = Files.readString(Paths.get("docs/" + vars[1]));
 								
-						FileOutputStream fos = new FileOutputStream(sendFile);
+						// FileOutputStream fos = new FileOutputStream(sendFile);
 				
-						fos.write(content.getBytes(StandardCharsets.UTF_8), 0, content.length());
+						// fos.write(content.getBytes(StandardCharsets.UTF_8), 0, content.length());
 				
-						fos.flush();
-						fos.close();
+						// fos.flush();
+						// fos.close();
 
 						ByteArrayOutputStream b = new ByteArrayOutputStream(content.length());
-						b.writeTo(fos);
+						// b.writeTo(fos);
+						b.write(content.getBytes());
+						
+						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), resource.length, addr, packet.getPort());
+						socket.send(filePacket);
 
 						b.flush();
 						b.close();
 
-						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), resource.length, addr, packet.getPort());
-						socket.send(filePacket);
+						System.out.println("FILE PACKET DATA ====> " + filePacket.getData());
 					}
 					
 				}
 
-				System.out.println("DATA ====> " + packet.getData());
-				System.out.println("String ====> " + data);
-				
 			} catch (IOException e) {
 				// System.out.println(e);
 			}

@@ -13,6 +13,7 @@ A sua tarefa consiste na implementação de um sistema P2P básico, que deve ser
 Para o desenvolvimento, é sugerido que os alunos utilizem uma rede com topologia definida, e que sejam realizados testes com um número suficiente de máquinas (pelo menos 3) ou VMs.
 
 O trabalho deve ser realizado em grupos de 2 ou 3 integrantes. Qualquer linguagem de programação pode ser utilizada, desde que as abstrações para comunicação entre processos sejam e equivalentes aos exemplos apresentados em sala de aula (modelo de comunicação utilizando Sockets). Para a entrega é solicitado o código fonte da aplicação. O trabalho será apresentado em sala de aula pelo grupo no dia 04/10.
+
 # Como rodar
 
 ## 1. Ter Java instalado e configurado.
