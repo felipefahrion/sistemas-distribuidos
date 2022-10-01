@@ -54,11 +54,12 @@ public class p2pPeerClient extends Thread {
 						addr = InetAddress.getByName(vars[2]);
 						String contentQuery = vars[0] + " " + vars[1];
 						resource = contentQuery.getBytes();
-
+						
 						break;
-
+						
 					case "peer":
 						peer_port = Integer.parseInt(vars[3]);
+						addr = InetAddress.getByName(vars[2]);
 						resource = vars[1].getBytes();
 
 						break;

@@ -39,6 +39,8 @@ public class p2pPeerThread extends Thread {
 			// envia um packet
 			DatagramPacket packet = new DatagramPacket(resource, resource.length, addr, 9000);
 			socket.send(packet);
+
+			System.out.println("O QUE TEM AQUI? " + packet.toString());
 		} catch (IOException e) {
 			socket.close();
 		}
