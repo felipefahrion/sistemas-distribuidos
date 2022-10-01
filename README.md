@@ -61,3 +61,8 @@ query a1.txt 192.168.68.101
 - Para o peer baixar o documento diretamente de outro peer:
 
 ...
+
+java p2pServer 10.0.0.102
+
+java p2pPeer 127.0.0.1 "registry pipo docs/a1.txt,docs/a2.txt,docs/a3.txt" 9001
+

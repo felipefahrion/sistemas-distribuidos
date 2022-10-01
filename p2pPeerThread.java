@@ -11,7 +11,7 @@ public class p2pPeerThread extends Thread {
 	protected int port;
 	protected String[] vars;
 
-	public p2pPeerThread(String[] args) throws IOException {
+	public p2pPeerThread(String[] args, Map<String, String> resourceList) throws IOException {
 		// envia um packet
 		resource = args[1].getBytes();
 		addr = InetAddress.getByName(args[0]);
@@ -33,6 +33,7 @@ public class p2pPeerThread extends Thread {
 		
 		while (true) {
 			try {
+				System.out.println("p2pPeerThread");
 				// obtem a resposta
 				packet = new DatagramPacket(response, response.length);
 				socket.setSoTimeout(500);
@@ -40,14 +41,10 @@ public class p2pPeerThread extends Thread {
 				
 				// mostra a resposta
 				String data = new String(packet.getData(), 0, packet.getLength());
-				System.out.println("recebido: " + data);
+				System.out.println("Received:\n" + data);
 				
 			} catch (IOException e) {
-//				if (!vars[0].equals("wait")) {
-//					// fecha o socket
-//					socket.close();
-//					break;
-//				}
+				System.out.println(e);
 			}
 		}
 

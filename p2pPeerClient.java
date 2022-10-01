@@ -25,7 +25,7 @@ public class p2pPeerClient extends Thread {
 		// nickname = vars[1]
 		// resourceList = vars[2]
 
-		peer = createPeer(vars[0], args[0], args[2], vars[2]);
+		peer = createPeer(vars[0], args[0], port, vars[2]);
 		socket = new DatagramSocket(port);
 	}
 
@@ -55,19 +55,7 @@ public class p2pPeerClient extends Thread {
 						resource = contentQuery.getBytes();
 
 						break;
-
-					case "p2p":
-
-							// filename = vars[1]
-							// hash = vars[2]
-							// peer_ip = vars[3]
-							// peer_port = vars[4]
-
-							String contentP2p = vars[0] + " " + vars[1]  + " " + vars[2]  + " " + vars[3]  + " " + vars[4];
-							resource = contentP2p.getBytes();
-
-						break;
-
+						
 					default:
 						peer_port = Integer.parseInt(vars[3]);
 						break;
