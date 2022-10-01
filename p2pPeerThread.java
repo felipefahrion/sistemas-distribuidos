@@ -44,7 +44,7 @@ public class p2pPeerThread extends Thread {
 				System.out.println("Received:\n" + data);
 				
 			} catch (IOException e) {
-				System.out.println(e);
+				// System.out.println(e);
 			}
 		}
 
