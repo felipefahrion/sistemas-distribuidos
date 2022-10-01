@@ -66,9 +66,6 @@ public class p2pPeerClient extends Thread {
 						break;
 
 					case "p2p":
-						// 0   1      2      3         4
-						// p2p a1.txt <hash> <peer_ip> <peer_port>"
-
 						peer_port = Integer.parseInt(vars[4]);
 						addr = InetAddress.getByName(vars[3]);
 
@@ -97,7 +94,7 @@ public class p2pPeerClient extends Thread {
 
 					// mostra a resposta
 					String resposta = new String(packet.getData(), 0, packet.getLength());
-					System.out.println("recebido: " + resposta);
+					System.out.println("Received: " + resposta);
 
 					if(resposta.length() > 0){
 						String[] a = resposta.split("\\;");

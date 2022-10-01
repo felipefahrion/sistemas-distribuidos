@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -53,12 +52,6 @@ public class p2pPeerThread extends Thread {
 				String vars[] = data.split("\\s");
 
 				if(vars.length > 1 && vars[0].equals("p2p")){
-					System.out.println("P2P BOLADAO");
-
-					for (int i = 0; i < vars.length; i++) {
-						System.out.println(i + " " + vars[i]);
-					}
-
 					if(resourceList.get(vars[1]).equals(vars[2])){
 						String contentFile = Files.readString(Paths.get("docs/" + vars[1]));
 						String content = "newfile" + ";" + vars[1] + ";" + contentFile;
@@ -67,16 +60,15 @@ public class p2pPeerThread extends Thread {
 
 						ByteArrayOutputStream b = new ByteArrayOutputStream(contentFile.length());
 						b.write(content.getBytes());
-						
-						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), content.length(), packet.getAddress(), packet.getPort());
-						socket.send(filePacket);
 
 						b.flush();
 						b.close();
+						
+						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), content.length(), packet.getAddress(), packet.getPort());
+						socket.send(filePacket);
 					}
 					
 				}
-
 			} catch (IOException e) {
 				// System.out.println(e);
 			}
