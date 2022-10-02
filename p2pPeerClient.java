@@ -42,7 +42,7 @@ public class p2pPeerClient extends Thread {
 		while (true) {
 			System.out.println("Exemplo para solicitar um doc: query a1.txt <server_ip>");
 			System.out.println("Exemplo para baixar um doc: p2p a1.txt <hash> <peer_ip> <peer_port>"); // WIP
-			System.out.println("Exemplo para baixar um doc: peer \"text\" <peer_ip> <peer_port>");
+			// System.out.println("Exemplo para baixar um doc: peer \"text\" <peer_ip> <peer_port>");
 
 			try {
 				String str = obj.readLine();

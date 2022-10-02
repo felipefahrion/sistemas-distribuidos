@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.time.Period;
 import java.util.*;
 
 public class p2pServer {
@@ -41,9 +40,8 @@ public class p2pServer {
 
 		for (Peer peer : peers) {
 			String hash = (String) peer.getResourceList().get(fileName);
-			String content = "\nFilename: " + fileName + " Hash: " + hash + " => " + peer.getNickname() + " port: "
-					+ peer.getPort() + " address: " + peer.getAddress() + "\n";
-
+			String content = "\nFilename: " + fileName + " Hash: " + hash + " => " + peer.getNickname() +
+					" address: " + peer.getAddress() + " port: " + peer.getPort() + "\n";
 			returnedList += content;
 		}
 
@@ -85,6 +83,8 @@ public class p2pServer {
 
 		List<Peer> peers = new ArrayList<>();
 		List<Integer> heartbeatRegister = new ArrayList<>();
+
+		System.out.println("==> Server criado");
 
 		while (true) {
 			try {

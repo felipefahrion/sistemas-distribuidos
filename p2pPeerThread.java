@@ -45,7 +45,7 @@ public class p2pPeerThread extends Thread {
 				
 				// mostra a resposta
 				String data = new String(packet.getData(), 0, packet.getLength());
-				System.out.println("Received:\n" + data);
+				System.out.println("Recebido:\n" + data);
 
 				// 0   1      2      
 				// p2p a1.txt <hash>
@@ -56,7 +56,7 @@ public class p2pPeerThread extends Thread {
 						String contentFile = Files.readString(Paths.get("docs/" + vars[1]));
 						String content = "newfile" + ";" + vars[1] + ";" + contentFile;
 
-						System.out.println("CONTENT ====> " + content);
+						System.out.println("CONTEUDO ====> \n" + content);
 
 						ByteArrayOutputStream b = new ByteArrayOutputStream(contentFile.length());
 						b.write(content.getBytes());
