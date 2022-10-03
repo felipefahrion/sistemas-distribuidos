@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class p2pPeerThread extends Thread {
@@ -10,8 +12,10 @@ public class p2pPeerThread extends Thread {
 	protected byte[] response = new byte[1024];
 	protected int port;
 	protected String[] vars;
+	protected Map<String, String> resourceList = null;
 
-	public p2pPeerThread(String[] args) throws IOException {
+
+	public p2pPeerThread(String[] args, Map<String, String> resourceContent) throws IOException {
 		// envia um packet
 		resource = args[1].getBytes();
 		addr = InetAddress.getByName(args[0]);
@@ -19,12 +23,13 @@ public class p2pPeerThread extends Thread {
 		// cria um socket datagrama
 		socket = new DatagramSocket(port);
 		vars = args[1].split("\\s");
+
+		resourceList = resourceContent;
 	}
 
 	public void run() {
 		
 		try {
-			// envia um packet
 			DatagramPacket packet = new DatagramPacket(resource, resource.length, addr, 9000);
 			socket.send(packet);
 		} catch (IOException e) {
@@ -40,14 +45,32 @@ public class p2pPeerThread extends Thread {
 				
 				// mostra a resposta
 				String data = new String(packet.getData(), 0, packet.getLength());
-				System.out.println("recebido: " + data);
-				
+				System.out.println("Recebido:\n" + data);
+
+				// 0   1      2      
+				// p2p a1.txt <hash>
+				String vars[] = data.split("\\s");
+
+				if(vars.length > 1 && vars[0].equals("p2p")){
+					if(resourceList.get(vars[1]).equals(vars[2])){
+						String contentFile = Files.readString(Paths.get("docs/" + vars[1]));
+						String content = "newfile" + ";" + vars[1] + ";" + contentFile;
+
+						System.out.println("CONTEUDO ====> \n" + content);
+
+						ByteArrayOutputStream b = new ByteArrayOutputStream(contentFile.length());
+						b.write(content.getBytes());
+
+						b.flush();
+						b.close();
+						
+						DatagramPacket filePacket = new DatagramPacket(b.toByteArray(), content.length(), packet.getAddress(), packet.getPort());
+						socket.send(filePacket);
+					}
+					
+				}
 			} catch (IOException e) {
-//				if (!vars[0].equals("wait")) {
-//					// fecha o socket
-//					socket.close();
-//					break;
-//				}
+				// System.out.println(e);
 			}
 		}
 

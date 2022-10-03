@@ -3,98 +3,125 @@ import java.net.*;
 import java.util.*;
 
 public class p2pServer {
-	public static void main(String[] args) throws IOException {
-		String content = null;
-		InetAddress addr;
-		int port;
-		byte[] resource = new byte[1024];
+
+	private static final Integer TIME_MILISSECONDS = 25;
+
+	public static List<Peer> registry(List<Peer> peers, String nickname, InetAddress address, Integer port,
+			String resourceList, List<Integer> timeoutVal, DatagramSocket socket) throws IOException {
 		byte[] response = new byte[1024];
+
+		int j;
+
+		for (j = 0; j < peers.size(); j++) {
+			if (peers.get(j).getNickname().equals(nickname))
+				break;
+		}
+
+		if (j == peers.size()) {
+			Peer p = new Peer(nickname, address, port, resourceList);
+			peers.add(p);
+			timeoutVal.add(TIME_MILISSECONDS);
+
+			response = "OK".getBytes();
+		} else {
+			response = "NOT OK".getBytes();
+		}
+
+		DatagramPacket packet = new DatagramPacket(response, response.length, address, port);
+		socket.send(packet);
+
+		return peers;
+	}
+
+	public static String query(String fileName, List<Peer> peers, InetAddress address, Integer port,
+			DatagramSocket socket) throws IOException {
+		String returnedList = null;
+		byte[] response = new byte[1024];
+
+		for (Peer peer : peers) {
+			String hash = (String) peer.getResourceList().get(fileName);
+			String content = "\nFilename: " + fileName + " Hash: " + hash + " => " + peer.getNickname() +
+					" address: " + peer.getAddress() + " port: " + peer.getPort() + "\n";
+			returnedList += content;
+		}
+
+		DatagramPacket packet = new DatagramPacket(returnedList.getBytes(), returnedList.getBytes().length, address,
+				port);
+		socket.send(packet);
+
+		return returnedList;
+	}
+
+	public static List<Integer> hearbeat(String nickname, List<Peer> peers, List<Integer> timeoutVal) {
+		System.out.println("Heartbeat de " + nickname);
+
+		for (int i = 0; i < peers.size(); i++) {
+			if (peers.get(i).getNickname().equals(nickname)) {
+				timeoutVal.set(i, TIME_MILISSECONDS);
+			}
+		}
+
+		return timeoutVal;
+	}
+
+	public static List<Integer> removePeer(List<Peer> peers, List<Integer> timeoutVal) {
+		for (int i = 0; i < timeoutVal.size(); i++) {
+			timeoutVal.set(i, timeoutVal.get(i) - 1);
+			if (timeoutVal.get(i) == 0) {
+				System.out.println("\nPeer " + peers.get(i).getNickname() + " faleceu.");
+				peers.remove(i);
+				timeoutVal.remove(i);
+			}
+		}
+		return timeoutVal;
+	}
+
+	public static void main(String[] args) throws IOException {
 		DatagramSocket socket = new DatagramSocket(9000);
 		DatagramPacket packet;
-		
-		List<String> resourceList = new ArrayList<>();
-		List<InetAddress> resourceAddr = new ArrayList<>();
-		List<Integer> resourcePort = new ArrayList<>();
-		List<Integer> timeoutVal = new ArrayList<>();
+		byte[] resource = new byte[1024];
 
-		int timeoutSeconds = 10;
-		
+		List<Peer> peers = new ArrayList<>();
+		List<Integer> heartbeatRegister = new ArrayList<>();
+
+		System.out.println("==> Server criado");
+
 		while (true) {
 			try {
 				// recebe datagrama
 				packet = new DatagramPacket(resource, resource.length);
 				socket.setSoTimeout(500);
 				socket.receive(packet);
-				System.out.print("Recebi!");
-								
-				// processa o que foi recebido, adicionando a uma lista
-				content = new String(packet.getData(), 0, packet.getLength());
-				addr = packet.getAddress();
-				port = packet.getPort();
-				String vars[] = content.split("\\s");
-				
-				if (vars[0].equals("create") && vars.length > 1) {
-					int j;
-					
-					for (j = 0; j < resourceList.size(); j++) {
-						if (resourceList.get(j).equals(vars[1]))
+
+				System.out.println("\nDatagrama recebido!");
+
+				String contentReceived = new String(packet.getData(), 0, packet.getLength());
+				InetAddress addressReceived = packet.getAddress();
+				Integer portReceived = packet.getPort();
+				String vars[] = contentReceived.split("\\s");
+
+				if (vars.length > 1) {
+					switch (vars[0]) {
+						case "registry":
+							peers = registry(peers, vars[1], addressReceived, portReceived, vars[2], heartbeatRegister,
+									socket);
 							break;
-					}
-					
-					if (j == resourceList.size()) {
-						resourceList.add(vars[1]);
-						resourceAddr.add(addr);
-						resourcePort.add(port);
-						timeoutVal.add(timeoutSeconds);		/* 500ms * timeoutSeconds = 7.5s (enough for 5s heartbeat) */
-						
-						response = "OK".getBytes();
-					} else {
-						response = "NOT OK".getBytes();
-					}
-					
-					packet = new DatagramPacket(response, response.length, addr, port);
-					socket.send(packet);
-				}
-				
-				if (vars[0].equals("list") && vars.length > 1) {
-					for (int j = 0; j < resourceList.size(); j++) {
-						if (resourceList.get(j).equals(vars[1])) {
-							for (int i = 0; i < resourceList.size(); i++) {
-								String data = new String(resourceList.get(i) + " " + resourceAddr.get(i).toString() + " " + resourcePort.get(i).toString());
-								response = data.getBytes();
-								
-								packet = new DatagramPacket(response, response.length, addr, port);
-								socket.send(packet);
-							}
+
+						case "query":
+							query(vars[1], peers, addressReceived, portReceived, socket);
 							break;
-						}
-					}
-				}
-				
-				if (vars[0].equals("heartbeat") && vars.length > 1) {
-					System.out.print("\nheartbeat: " + vars[1]);
-					for (int i = 0; i < resourceList.size(); i++) {
-						if (resourceList.get(i).equals(vars[1]))
-							timeoutVal.set(i, timeoutSeconds);
+
+						case "heartbeat":
+							heartbeatRegister = hearbeat(vars[1], peers, heartbeatRegister);
+							break;
+
+						default:
+							break;
 					}
 				}
 
-				System.out.println("TimeVal");
-				for (Integer e : timeoutVal) {
-					System.out.println(e);
-				}
 			} catch (IOException e) {
-				// decrementa os contadores de timeout a cada 500ms (em função do receive com timeout)
-				for (int i = 0; i < timeoutVal.size(); i++) {
-					timeoutVal.set(i, timeoutVal.get(i) - 1);
-					if (timeoutVal.get(i) == 0) {
-						System.out.println("\nuser " + resourceList.get(i) + " is dead.");
-						resourceList.remove(i);
-						resourceAddr.remove(i);
-						resourcePort.remove(i);
-						timeoutVal.remove(i);
-					}
-				}
+				heartbeatRegister = removePeer(peers, heartbeatRegister);
 				System.out.print(".");
 			}
 		}

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class p2pPeerClient extends Thread {
@@ -9,56 +10,107 @@ public class p2pPeerClient extends Thread {
 	protected byte[] resource = new byte[1024];
 	protected byte[] response = new byte[1024];
 	protected int port, peer_port;
+	private Peer peer;
 
-	public p2pPeerClient(String[] args) throws IOException {
+	public p2pPeerClient(String[] args, Map<String, String> resourceList) throws IOException {
+
+		// port = args[2]
+		// address = args[0]
+		// content = args[1]
+
 		port = Integer.parseInt(args[2]) + 101;
-		// cria um socket datagrama
+
+		String vars[] = args[1].split("\\s");
+
+		// method = vars[0]
+		// nickname = vars[1]
+		// resourceList = vars[2]
+
+		peer = createPeer(vars[0], args[0], port, vars[2]);
 		socket = new DatagramSocket(port);
+	}
+
+	public Peer createPeer(String nickname, String address, Integer port, String resourceList)
+			throws NumberFormatException, UnknownHostException {
+		return new Peer(nickname, InetAddress.getByName(address), port, resourceList);
 	}
 
 	public void run() {
 		BufferedReader obj = new BufferedReader(new InputStreamReader(System.in));
-		String str = "";	
+		// String str = "";
 
 		while (true) {
+			System.out.println("Exemplo para solicitar um doc: query a1.txt <server_ip>");
+			System.out.println("Exemplo para baixar um doc: p2p a1.txt <hash> <peer_ip> <peer_port>"); // WIP
+			// System.out.println("Exemplo para baixar um doc: peer \"text\" <peer_ip> <peer_port>");
 
-			System.out.println("\n<list/peer> <message> <ip>");
-			System.out.println("Example: list user <server_ip>");
-			System.out.println("Example: peer \"hello_world!\" <peer_ip> <port>");
 			try {
-				str = obj.readLine();
+				String str = obj.readLine();
 				String vars[] = str.split("\\s");
-				addr = InetAddress.getByName(vars[2]);
-				String str2 = vars[0] + " " + vars[1];
-				resource = str2.getBytes();
-				if (vars.length == 4) {
-					System.out.println("Sending message to peer on port " + vars[3]);
-					peer_port = Integer.parseInt(vars[3]);
-				} else {
-					peer_port = 9000;
+
+				
+				switch (vars[0]) {
+					case "query":
+						peer_port = 9000;
+						addr = InetAddress.getByName(vars[2]);
+						String contentQuery = vars[0] + " " + vars[1];
+						resource = contentQuery.getBytes();
+						
+						break;
+						
+					case "peer":
+						peer_port = Integer.parseInt(vars[3]);
+						addr = InetAddress.getByName(vars[2]);
+						resource = vars[1].getBytes();
+
+						break;
+
+					case "p2p":
+						peer_port = Integer.parseInt(vars[4]);
+						addr = InetAddress.getByName(vars[3]);
+
+						String content = vars[0] + " " + vars[1] + " " + vars[2];
+						resource = content.getBytes();
+
+						break;
+
+					default:
+						peer_port = Integer.parseInt(vars[3]);
+						break;
 				}
-			} catch (IOException e) {
-			}
-			
-			try {
+
 				packet = new DatagramPacket(resource, resource.length, addr, peer_port);
 				socket.send(packet);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+
+			while (true) {
+				try {
+					// obtem a resposta
+					packet = new DatagramPacket(response, response.length);
+					socket.setSoTimeout(500);
+					socket.receive(packet);
+
+					// mostra a resposta
+					String resposta = new String(packet.getData(), 0, packet.getLength());
+					System.out.println("Received: " + resposta);
+
+					if(resposta.length() > 0){
+						String[] a = resposta.split("\\;");
+
+						if (a[0].equals("newfile")) {
+							File newFile = new File("received/copy_" + a[1]);
+							FileOutputStream fos = new FileOutputStream(newFile);
 				
-				while (true) {
-					try {
-						// obtem a resposta
-						packet = new DatagramPacket(response, response.length);
-						socket.setSoTimeout(500);
-						socket.receive(packet);
-						
-						// mostra a resposta
-						String resposta = new String(packet.getData(), 0, packet.getLength());
-						System.out.println("recebido: " + resposta);
-					} catch (IOException e) {
-						break;
+							fos.write(a[2].getBytes(StandardCharsets.UTF_8), 0, a[2].length());
+							fos.flush();
+							fos.close();
+						}
 					}
+				} catch (IOException e) {
+					break;
 				}
-			} catch (IOException e) {
 			}
 		}
 	}

@@ -24,21 +24,14 @@ public class p2pPeerHeartbeat extends Thread {
 		while (true) {
 			try {
 				packet = new DatagramPacket(data, data.length, address, 9000);
-
-				System.out.println(packet.toString());
 				socket.send(packet);
-			} catch (IOException e) {
-				System.out.println("Error in send hearbeat ====> " + e);
-				socket.close();
-			}
-			
-			try {
 				Thread.sleep(timeheartbeat);
+			} catch (IOException e) {
+				System.out.println("Erro enviando hearbeat ====> " + e);
+				socket.close();
 			} catch(InterruptedException e) {
-				System.out.println("Error in Thread Sleep ====> " + e);
+				System.out.println("Error na Thread Sleep ====> " + e);
 			}
-
-			System.out.println("\n sent heartbeat <3!");
 		}
 	}
 }

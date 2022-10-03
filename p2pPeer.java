@@ -1,21 +1,17 @@
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 public class p2pPeer {
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 3) {
-			System.out.println("Uso: java p2pPeer <server> \"<message>\" <localport>");
-			System.out.println("<message> is:");
-			System.out.println("create nickname");
-			System.out.println("list nickname");
-			System.out.println("wait");
-			return;
-		} else {
-			new p2pPeerThread(args).start();
-			new p2pPeerHeartbeat(args).start();
-			new p2pPeerClient(args).start();
-		}
+		String vars[] = args[1].split("\\s");
+
+		Peer p = new Peer(null, null, null, vars[2]);
+		Map<String, String> resourceList = p.getResourceList();
+
+		System.out.println("==> Peer criado");
+		new p2pPeerThread(args, resourceList).start();
+		new p2pPeerHeartbeat(args).start();
+		new p2pPeerClient(args, resourceList).start();
 	}
 }
